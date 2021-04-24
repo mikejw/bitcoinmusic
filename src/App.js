@@ -85,16 +85,12 @@ export default function() {
   }
 
   function handlePositionMouseDown() {
-    console.log('down');
-    let volume = parseFloat(`0`);
-    console.log(volume);
-    Howler.volume(0);
+    sound.volume(0);
     window.addEventListener('mouseup', handlePositionMouseUp);
   }
 
   function handlePositionMouseUp() {
-    console.log('up');
-    Howler.volume(parseFloat(`${(volume) / 100}`));
+    sound.volume(1);
     window.removeEventListener('mouseup', handlePositionMouseUp);
   }
 
