@@ -16,7 +16,7 @@ import { debounce } from 'lodash';
 
 const useStyles = makeStyles({
   root: {
-    width: 200,
+    width: '100%',
   },
 });
 
@@ -51,6 +51,10 @@ export default function() {
 
   const [ playing, setPlaying ] = useState(false);
 
+  const [ hasTrackNext, setHasTrackNext ] = useState(tracks.length > 1);
+
+  const [ hasTrackPrev, setHasTrackPrev ] = useState(false);
+
   const [ volume, setVolume ] = useState(30);
   Howler.volume(`${(volume) / 100}`);
 
@@ -81,11 +85,15 @@ export default function() {
   }
 
   function handlePositionMouseDown() {
-    Howler.volume(parseFloat(`0`));
+    console.log('down');
+    let volume = parseFloat(`0`);
+    console.log(volume);
+    Howler.volume(0);
     window.addEventListener('mouseup', handlePositionMouseUp);
   }
 
   function handlePositionMouseUp() {
+    console.log('up');
     Howler.volume(parseFloat(`${(volume) / 100}`));
     window.removeEventListener('mouseup', handlePositionMouseUp);
   }
@@ -94,12 +102,16 @@ export default function() {
     setPlaying(false);
     setPosition(0);
     setTrackPlaying(trackPlaying + 1);
+    setHasTrackNext(!!tracks[trackPlaying + 2]);
+    setHasTrackPrev(true);
   }
 
   function handleSkipPrevious() {
     setPlaying(false);
     setPosition(0);
     setTrackPlaying(trackPlaying - 1);
+    setHasTrackNext(!!tracks[trackPlaying + 2]);
+    setHasTrackPrev(!!tracks[trackPlaying - 1]);
   }
 
   function tick() {
@@ -140,21 +152,28 @@ export default function() {
         tick();
       }, 1000);
     }
-  }, [playing, trackPlaying]);
+  }, [playing]);
 
   return (
     <Container>
-      <div>
-        <SkipPrevious onClick={ handleSkipPrevious } style={{ color: '#999', cursor: 'pointer'}} />
-        {!playing &&
-          <PlayCircleFilled onClick={ play } style={{ color: '#999', cursor: 'pointer'}} />
-        }
-        {playing &&
-          <PauseCircleFilled onClick={ pause } style={{ color: '#999', cursor: 'pointer'}} />
-        }
-        <SkipNext onClick={ handleSkipNext } style={{ color: '#999', cursor: 'pointer'}} />
-      </div>
       <div className={classes.root}>
+        <img src={"/art.jpg"} alt="Artwork" style={{ width: '100%'}} />
+        <div>
+          <SkipPrevious
+            onClick={ hasTrackPrev? handleSkipPrevious: () => {} }
+            style={ hasTrackPrev? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
+          />
+          {!playing &&
+          <PlayCircleFilled onClick={ play } style={{ color: '#999', cursor: 'pointer'}} />
+          }
+          {playing &&
+          <PauseCircleFilled onClick={ pause } style={{ color: '#999', cursor: 'pointer'}} />
+          }
+          <SkipNext
+            onClick={ hasTrackNext? handleSkipNext: () => {} }
+            style={ hasTrackNext? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
+          />
+        </div>
         <Typography id="continuous-slider" gutterBottom>
           Volume
         </Typography>
@@ -189,6 +208,9 @@ export default function() {
             { trackSeek } / { trackLength }
           </Grid>
         </Grid>
+        <p>{ tracks[trackPlaying] }</p>
+        <p>Next: { hasTrackNext.toString() }</p>
+        <p>Prev: { hasTrackPrev.toString() }</p>
       </div>
     </Container>
   );
