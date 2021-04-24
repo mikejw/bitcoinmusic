@@ -80,7 +80,17 @@ export default function() {
     sound.seek(seek);
   }
 
-  let debounceHandleChangePosition = debounce(handleChangePosition, 10);
+  function handlePositionMouseDown() {
+    Howler.volume(parseFloat(`0`));
+    window.addEventListener('mouseup', handlePositionMouseUp);
+  }
+
+  function handlePositionMouseUp() {
+    Howler.volume(parseFloat(`${(volume) / 100}`));
+    window.removeEventListener('mouseup', handlePositionMouseUp);
+  }
+
+  let debounceHandleChangePosition = debounce(handleChangePosition, 5);
 
   useEffect(() => {
     if (!playing) {
@@ -131,10 +141,14 @@ export default function() {
         </Typography>
         <Grid container spacing={ 2 }>
           <Grid item>
-
           </Grid>
           <Grid item xs>
-            <Slider onMouseDown={ () => { console.log('pressed') } }value={ position } onChange={ debounceHandleChangePosition } aria-labelledby="continuous-slider" />
+            <Slider
+              onMouseDown={ handlePositionMouseDown }
+              value={ position }
+              onChange={ debounceHandleChangePosition }
+              aria-labelledby="continuous-slider"
+            />
           </Grid>
           <Grid item>
             { trackSeek } / { trackLength }
