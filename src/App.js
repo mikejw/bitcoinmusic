@@ -10,6 +10,8 @@ import VolumeDown from '@material-ui/icons/VolumeDown';
 import VolumeUp from '@material-ui/icons/VolumeUp';
 import PlayCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import PauseCircleFilled from '@material-ui/icons/PauseCircleFilled';
+import SkipNext from '@material-ui/icons/SkipNext';
+import SkipPrevious from '@material-ui/icons/SkipPrevious';
 import { debounce } from 'lodash';
 
 const useStyles = makeStyles({
@@ -35,24 +37,22 @@ var interval;
 export default function() {
   const classes = useStyles();
 
-  const [ sound, setSound ] = useState(
-    new Howl({
-      src: ['/vitamin_d.mp3', '/dillema.mp3', '/pop.mp3', '/shuff.mp3'],
-      autoplay: false,
-      loop: false
-    })
-  );
+  const [ tracks, setTracks ] = useState(['/vitamin_d.mp3', '/dillema.mp3', '/pop.mp3', '/shuff.mp3'])
 
-  const [ trackSeek, setTrackSeek ] = useState(0);
+  const [ sound, setSound ] = useState(null);
 
-  const [ trackLength, setTrackLength ] = useState(0);
+  const [ trackPlaying, setTrackPlaying ] = useState(0);
+
+  const [ trackSeek, setTrackSeek ] = useState(formatTime(0));
+
+  const [ trackLength, setTrackLength ] = useState(formatTime(0));
 
   const [ position, setPosition ] = useState(0);
 
   const [ playing, setPlaying ] = useState(false);
 
-  const [ volume, setVolume ] = useState(0);
-  Howler.volume(volume);
+  const [ volume, setVolume ] = useState(30);
+  Howler.volume(`${(volume) / 100}`);
 
   const handleChangeVolume = (event, newValue) => {
     setVolume(newValue);
@@ -90,34 +90,69 @@ export default function() {
     window.removeEventListener('mouseup', handlePositionMouseUp);
   }
 
+  function handleSkipNext() {
+    setPlaying(false);
+    setPosition(0);
+    setTrackPlaying(trackPlaying + 1);
+  }
+
+  function handleSkipPrevious() {
+    setPlaying(false);
+    setPosition(0);
+    setTrackPlaying(trackPlaying - 1);
+  }
+
+  function tick() {
+    let trackSeek = formatTime(sound.seek());
+    setTrackSeek(trackSeek);
+    let position = Math.ceil(sound.seek() / sound._duration * 100);
+    setPosition(position);
+    let trackLength = formatTime(sound._duration);
+    setTrackLength(trackLength);
+  }
+
   let debounceHandleChangePosition = debounce(handleChangePosition, 5);
+
+  useEffect(() => {
+    console.log('Loaded track: ' + tracks[trackPlaying]);
+    let auto = false;
+    if (sound) {
+      sound.stop();
+      auto = true;
+      setPlaying(true);
+    }
+    setSound(
+      new Howl({
+        src: tracks[trackPlaying],
+        autoplay: auto,
+        loop: false,
+        onend: handleSkipNext
+      })
+    );
+  }, [trackPlaying]);
 
   useEffect(() => {
     if (!playing) {
       clearInterval(interval);
     } else {
+      tick();
       interval = setInterval(() => {
-        let trackSeek = formatTime(sound.seek());
-        setTrackSeek(trackSeek);
-        let position = Math.ceil(sound.seek() / sound._duration * 100);
-        setPosition(position);
-
-        let trackLength = formatTime(sound._duration);
-        setTrackLength(trackLength);
-
+        tick();
       }, 1000);
     }
-  }, [playing]);
+  }, [playing, trackPlaying]);
 
   return (
     <Container>
       <div>
+        <SkipPrevious onClick={ handleSkipPrevious } style={{ color: '#999', cursor: 'pointer'}} />
         {!playing &&
-          <PlayCircleFilled onClick={ play } style={{ color: '#eee', cursor: 'pointer'}} />
+          <PlayCircleFilled onClick={ play } style={{ color: '#999', cursor: 'pointer'}} />
         }
         {playing &&
-          <PauseCircleFilled onClick={ pause } style={{ color: '#eee', cursor: 'pointer'}} />
+          <PauseCircleFilled onClick={ pause } style={{ color: '#999', cursor: 'pointer'}} />
         }
+        <SkipNext onClick={ handleSkipNext } style={{ color: '#999', cursor: 'pointer'}} />
       </div>
       <div className={classes.root}>
         <Typography id="continuous-slider" gutterBottom>
