@@ -16,7 +16,8 @@ import { debounce } from 'lodash';
 
 const useStyles = makeStyles({
   root: {
-    width: '100%',
+    maxWidth: '370px',
+    margin: 'auto'
   },
 });
 
@@ -79,8 +80,10 @@ export default function() {
   }
 
   function handleChangePosition(event, newValue) {
+    // prevent track skip
+    newValue = newValue > 99? 99: newValue;
+    let seek = (sound._duration / 100 * newValue);
     setPosition(newValue);
-    let seek = (sound._duration / 100 * newValue)
     sound.seek(seek);
   }
 
