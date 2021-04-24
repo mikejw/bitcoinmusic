@@ -1,3 +1,4 @@
 # player
 
-Describe player here.
+Visualiser: https://github.com/goldfire/howler.js/issues/771
+
