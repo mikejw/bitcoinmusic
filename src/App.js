@@ -190,12 +190,6 @@ export default function() {
       <div className={classes.root}>
         <img src={"/art.jpg"} alt="Artwork" style={{ width: '100%'}} />
         <div style={{ textAlign: 'center', fontSize: '2rem' }}>
-          {/*
-          <SkipPrevious
-            onClick={ hasTrackPrev? handleSkipPrevious: () => {} }
-            style={ hasTrackPrev? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
-          />
-          */}
           <SkipPrevious
             onClick={ handleSkipPrevious }
             style={{ color: '#999', cursor: 'pointer'}}
