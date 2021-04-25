@@ -86,8 +86,6 @@ export default function() {
   }
 
   function handleChangePosition(event, newValue) {
-    // prevent track skip
-    //newValue = newValue > 99? 99: newValue;
     let seek = (sound._duration / 100 * newValue);
     setPosition(newValue);
     sound.seek(seek);
@@ -150,7 +148,7 @@ export default function() {
       setPlayEvent(playEvent + 1);
     }
     if (sound) {
-      sound.stop();
+      sound.pause();
       calculateTimes();
     }
     setSound(
@@ -158,14 +156,20 @@ export default function() {
         src: tracks[trackPlaying],
         autoplay: autoplay,
         loop: false,
-        onend: hasTrackNext && !playing? () => {
-          setTimeout(() => {
-            handleSkipNext();
-          }, 500)
-        }: () => {
-          setPosition(0);
-          sound.seek(0);
-          calculateTimes();
+        onend: () => {
+          if (hasTrackNext) {
+            setTimeout(() => {
+              handleSkipNext();
+            }, 500);
+          } else {
+            // reset
+            setTimeout(() => {
+              setPlaying(false);
+              setPosition(0);
+              setIntro(true);
+              setTrackSeek(formatTime(0));
+            }, 500);
+          }
         }
       })
     );
@@ -205,44 +209,44 @@ export default function() {
             style={ hasTrackNext? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
           />
         </div>
-        <Typography id="continuous-slider" gutterBottom>
-          Volume
-        </Typography>
-        <Grid container spacing={ 2 }>
-          <Grid item>
-            <VolumeDown />
+        <div>
+          <Typography id="continuous-slider" gutterBottom>
+            Volume
+          </Typography>
+          <Grid container spacing={ 2 }>
+            <Grid item>
+              <VolumeDown />
+            </Grid>
+            <Grid item xs>
+              <Slider value={ volume } onChange={ handleChangeVolume } aria-labelledby="continuous-slider" />
+            </Grid>
+            <Grid item>
+              <VolumeUp />
+            </Grid>
           </Grid>
-          <Grid item xs>
-            <Slider value={ volume } onChange={ handleChangeVolume } aria-labelledby="continuous-slider" />
+          <Typography id="continuous-slider" gutterBottom>
+            Track
+          </Typography>
+          <Grid container spacing={ 2 }>
+            <Grid item>
+            </Grid>
+            <Grid item xs>
+              <Slider
+                onMouseDown={ handlePositionMouseDown }
+                value={ position }
+                onChange={ debounceHandleChangePosition }
+                aria-labelledby="continuous-slider"
+              />
+            </Grid>
+            <Grid item>
+              { trackSeek } / { trackLength }
+            </Grid>
           </Grid>
-          <Grid item>
-            <VolumeUp />
-          </Grid>
-        </Grid>
-      </div>
-      <div className={classes.root}>
-        <Typography id="continuous-slider" gutterBottom>
-          Track
-        </Typography>
-        <Grid container spacing={ 2 }>
-          <Grid item>
-          </Grid>
-          <Grid item xs>
-            <Slider
-              onMouseDown={ handlePositionMouseDown }
-              value={ position }
-              onChange={ debounceHandleChangePosition }
-              aria-labelledby="continuous-slider"
-            />
-          </Grid>
-          <Grid item>
-            { trackSeek } / { trackLength }
-          </Grid>
-        </Grid>
-        <p>{ tracks[trackPlaying] }</p>
-        <p>Next: { hasTrackNext.toString() }</p>
-        <p>Prev: { hasTrackPrev.toString() }</p>
-        <p>Track index: { trackPlaying }</p>
+          <p>{ tracks[trackPlaying] }</p>
+          <p>Next: { hasTrackNext.toString() }</p>
+          <p>Prev: { hasTrackPrev.toString() }</p>
+          <p>Track index: { trackPlaying }</p>
+        </div>
       </div>
     </Container>
   );
