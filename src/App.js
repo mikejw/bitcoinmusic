@@ -13,6 +13,7 @@ import PauseCircleFilled from '@material-ui/icons/PauseCircleFilled';
 import SkipNext from '@material-ui/icons/SkipNext';
 import SkipPrevious from '@material-ui/icons/SkipPrevious';
 import { debounce } from 'lodash';
+import usePrevious from "./hooks/usePrevious";
 
 const useStyles = makeStyles({
   root: {
@@ -34,6 +35,7 @@ function formatTime(time) {
 }
 
 var interval;
+const START_VOLUME = 20;
 
 export default function() {
   const classes = useStyles();
@@ -58,9 +60,13 @@ export default function() {
 
   const [ intro, setIntro ] = useState(true);
 
-  const [ reload, setReload ] = useState(0);
+  const [ reload, setReload ] = useState(0); // incremented
 
-  const [ volume, setVolume ] = useState(0);
+  const [ playEvent, setPlayEvent ] = useState(0); // incremented
+
+  const prevPlayEvent = usePrevious(playEvent)
+
+  const [ volume, setVolume ] = useState(START_VOLUME);
   Howler.volume(`${(volume) / 100}`);
 
   const handleChangeVolume = (event, newValue) => {
@@ -72,10 +78,6 @@ export default function() {
   function play() {
     sound.play();
     setPlaying(true);
-  }
-
-  function stop() {
-    sound.stop();
   }
 
   function pause() {
@@ -103,7 +105,6 @@ export default function() {
   }
 
   function handleSkipNext() {
-    setPlaying(false);
     setPosition(0);
     setHasTrackNext(!!tracks[trackPlaying + 2]);
     setHasTrackPrev(true);
@@ -111,14 +112,12 @@ export default function() {
   }
 
   function handleSkipPrevious() {
+    setPosition(0);
     if (intro && hasTrackPrev) {
-      setPlaying(false);
-      setPosition(0);
-      setHasTrackNext(!!tracks[trackPlaying + 2]);
+      setHasTrackNext(!!tracks[trackPlaying - 1]);
       setHasTrackPrev(!!tracks[trackPlaying - 2]);
       setTrackPlaying(trackPlaying - 1);
     } else {
-      setPlaying(false);
       setReload(reload + 1);
     }
   }
@@ -143,25 +142,27 @@ export default function() {
   let debounceHandleChangePosition = debounce(handleChangePosition, 2);
 
   useEffect(() => {
-    console.log('Loaded track: ' + tracks[trackPlaying]);
+    //console.log('Loaded track: ' + tracks[trackPlaying]);
     setIntro(true);
-    let auto = false;
+    let autoplay = false;
+    if (playing) {
+      autoplay = true;
+      setPlayEvent(playEvent + 1);
+    }
     if (sound) {
       sound.stop();
-      auto = true;
-      setPlaying(true);
+      calculateTimes();
     }
     setSound(
       new Howl({
         src: tracks[trackPlaying],
-        autoplay: auto,
+        autoplay: autoplay,
         loop: false,
         onend: hasTrackNext && !playing? () => {
           setTimeout(() => {
             handleSkipNext();
           }, 500)
         }: () => {
-          setPlaying(false);
           setPosition(0);
           sound.seek(0);
           calculateTimes();
@@ -174,18 +175,21 @@ export default function() {
     if (!playing) {
       clearInterval(interval);
     } else {
+      if (prevPlayEvent !== playEvent) {
+        clearInterval(interval);
+      }
       tick();
       interval = setInterval(() => {
         tick();
       }, 1000);
     }
-  }, [playing]);
+  }, [playing, playEvent]);
 
   return (
     <Container>
       <div className={classes.root}>
         <img src={"/art.jpg"} alt="Artwork" style={{ width: '100%'}} />
-        <div>
+        <div style={{ textAlign: 'center', fontSize: '2rem' }}>
           {/*
           <SkipPrevious
             onClick={ hasTrackPrev? handleSkipPrevious: () => {} }
@@ -244,6 +248,7 @@ export default function() {
         <p>{ tracks[trackPlaying] }</p>
         <p>Next: { hasTrackNext.toString() }</p>
         <p>Prev: { hasTrackPrev.toString() }</p>
+        <p>Track index: { trackPlaying }</p>
       </div>
     </Container>
   );
