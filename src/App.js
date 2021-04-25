@@ -81,10 +81,11 @@ export default function() {
 
   function handleChangePosition(event, newValue) {
     // prevent track skip
-    newValue = newValue > 99? 99: newValue;
+    //newValue = newValue > 99? 99: newValue;
     let seek = (sound._duration / 100 * newValue);
     setPosition(newValue);
     sound.seek(seek);
+    calculateTimes();
   }
 
   function handlePositionMouseDown() {
@@ -113,16 +114,20 @@ export default function() {
     setHasTrackPrev(!!tracks[trackPlaying - 1]);
   }
 
-  function tick() {
+  function calculateTimes() {
     let trackSeek = formatTime(sound.seek());
     setTrackSeek(trackSeek);
-    let position = Math.ceil(sound.seek() / sound._duration * 100);
-    setPosition(position);
     let trackLength = formatTime(sound._duration);
     setTrackLength(trackLength);
   }
 
-  let debounceHandleChangePosition = debounce(handleChangePosition, 5);
+  function tick() {
+    let position = Math.ceil(sound.seek() / sound._duration * 100);
+    setPosition(position);
+    calculateTimes();
+  }
+
+  let debounceHandleChangePosition = debounce(handleChangePosition, 2);
 
   useEffect(() => {
     console.log('Loaded track: ' + tracks[trackPlaying]);
@@ -137,7 +142,16 @@ export default function() {
         src: tracks[trackPlaying],
         autoplay: auto,
         loop: false,
-        onend: handleSkipNext
+        onend: hasTrackNext && !playing? () => {
+          setTimeout(() => {
+            handleSkipNext();
+          }, 500)
+        }: () => {
+          setPlaying(false);
+          setPosition(0);
+          sound.seek(0);
+          calculateTimes();
+        }
       })
     );
   }, [trackPlaying]);
