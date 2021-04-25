@@ -56,7 +56,11 @@ export default function() {
 
   const [ hasTrackPrev, setHasTrackPrev ] = useState(false);
 
-  const [ volume, setVolume ] = useState(30);
+  const [ intro, setIntro ] = useState(true);
+
+  const [ reload, setReload ] = useState(0);
+
+  const [ volume, setVolume ] = useState(0);
   Howler.volume(`${(volume) / 100}`);
 
   const handleChangeVolume = (event, newValue) => {
@@ -101,17 +105,22 @@ export default function() {
   function handleSkipNext() {
     setPlaying(false);
     setPosition(0);
-    setTrackPlaying(trackPlaying + 1);
     setHasTrackNext(!!tracks[trackPlaying + 2]);
     setHasTrackPrev(true);
+    setTrackPlaying(trackPlaying + 1);
   }
 
   function handleSkipPrevious() {
-    setPlaying(false);
-    setPosition(0);
-    setTrackPlaying(trackPlaying - 1);
-    setHasTrackNext(!!tracks[trackPlaying + 2]);
-    setHasTrackPrev(!!tracks[trackPlaying - 1]);
+    if (intro && hasTrackPrev) {
+      setPlaying(false);
+      setPosition(0);
+      setHasTrackNext(!!tracks[trackPlaying + 2]);
+      setHasTrackPrev(!!tracks[trackPlaying - 2]);
+      setTrackPlaying(trackPlaying - 1);
+    } else {
+      setPlaying(false);
+      setReload(reload + 1);
+    }
   }
 
   function calculateTimes() {
@@ -122,8 +131,12 @@ export default function() {
   }
 
   function tick() {
-    let position = Math.ceil(sound.seek() / sound._duration * 100);
+    const seek = sound.seek();
+    let position = Math.ceil(seek / sound._duration * 100);
     setPosition(position);
+    if (seek >= 3) {
+      setIntro(false);
+    }
     calculateTimes();
   }
 
@@ -131,6 +144,7 @@ export default function() {
 
   useEffect(() => {
     console.log('Loaded track: ' + tracks[trackPlaying]);
+    setIntro(true);
     let auto = false;
     if (sound) {
       sound.stop();
@@ -154,7 +168,7 @@ export default function() {
         }
       })
     );
-  }, [trackPlaying]);
+  }, [trackPlaying, reload]);
 
   useEffect(() => {
     if (!playing) {
@@ -172,9 +186,15 @@ export default function() {
       <div className={classes.root}>
         <img src={"/art.jpg"} alt="Artwork" style={{ width: '100%'}} />
         <div>
+          {/*
           <SkipPrevious
             onClick={ hasTrackPrev? handleSkipPrevious: () => {} }
             style={ hasTrackPrev? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
+          />
+          */}
+          <SkipPrevious
+            onClick={ handleSkipPrevious }
+            style={{ color: '#999', cursor: 'pointer'}}
           />
           {!playing &&
           <PlayCircleFilled onClick={ play } style={{ color: '#999', cursor: 'pointer'}} />
