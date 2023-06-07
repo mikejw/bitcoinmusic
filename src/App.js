@@ -34,13 +34,32 @@ function formatTime(time) {
   return `${ padDigits(timeArr[0], 2) }:${ padDigits(seconds, 2) }`;
 }
 
+const defTracks = [
+  {
+    title: 'Shell As Seen - Shuffle',
+    file:  '/tracks/shuff.mp3',
+  },
+  {
+    title: 'Shell As Seen - Not as Easy as it Looks',
+    file: '/tracks/pop.mp3',
+  },
+  {
+    title: 'Shell As Seen - Vitamin D',
+    file:  '/tracks/vitamin_d.mp3',
+  },
+  {
+    title: 'Shell As Seen - Dillema',
+    file: '/tracks/dillema.mp3'
+  }
+]
+
 var interval;
 const START_VOLUME = 20;
 
 export default function() {
   const classes = useStyles();
 
-  const [ tracks, setTracks ] = useState(['/vitamin_d.mp3', '/dillema.mp3', '/pop.mp3', '/shuff.mp3'])
+  const [ tracks, setTracks ] = useState(defTracks);
 
   const [ sound, setSound ] = useState(null);
 
@@ -153,7 +172,7 @@ export default function() {
     }
     setSound(
       new Howl({
-        src: tracks[trackPlaying],
+        src: tracks[trackPlaying].file,
         autoplay: autoplay,
         loop: false,
         onend: () => {
@@ -192,7 +211,8 @@ export default function() {
   return (
     <Container>
       <div className={classes.root}>
-        <img src={"/art.jpg"} alt="Artwork" style={{ width: '100%'}} />
+        <h1>Shell As Seen - Vitamin D EP</h1>
+        <img src={"/artwork/vitamin-d.jpg"} alt="Artwork" style={{ width: '100%'}} />
         <div style={{ textAlign: 'center', fontSize: '2rem' }}>
           <SkipPrevious
             onClick={ handleSkipPrevious }
@@ -242,10 +262,12 @@ export default function() {
               { trackSeek } / { trackLength }
             </Grid>
           </Grid>
-          <p>{ tracks[trackPlaying] }</p>
+          <p>{ tracks[trackPlaying].title }</p>
+          {/*
           <p>Next: { hasTrackNext.toString() }</p>
           <p>Prev: { hasTrackPrev.toString() }</p>
           <p>Track index: { trackPlaying }</p>
+          */}
         </div>
       </div>
     </Container>

@@ -5,4 +5,4 @@
 npm-debug.log*
 /public/*mp3
 .DS_Store
-
+/public/tracks

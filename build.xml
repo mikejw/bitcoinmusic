@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="build" name="veilcraft2">
+
+    <target depends="npm, nwb" name="build"/>
+
+    <target description="Install dependencies with npm" name="npm">
+        <exec executable="npm">
+            <arg value="install" />
+        </exec>
+    </target>
+
+    <target description="Build fe" name="nwb">
+        <exec dir="react" executable="npm">
+            <arg value="run" />
+            <arg value="build" />
+        </exec>
+        <copy todir="${basedir}/dist/" >
+            <fileset dir="${basedir}/public_html" includes="**"/>
+        </copy>
+    </target>
+</project>
