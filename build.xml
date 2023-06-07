@@ -10,7 +10,7 @@
     </target>
 
     <target description="Build fe" name="nwb">
-        <exec dir="react" executable="npm">
+        <exec dir="./" executable="npm">
             <arg value="run" />
             <arg value="build" />
         </exec>
