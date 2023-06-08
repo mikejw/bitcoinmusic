@@ -15,7 +15,10 @@
             <arg value="build" />
         </exec>
         <copy todir="${basedir}/public_html/" >
-            <fileset dir="${basedir}/dist/" includes="**"/>
+            <fileset dir="${basedir}/dist/" includes="**" />
         </copy>
+        <delete>
+            <fileset dir="${basedir}/public_html/" includes="*map" />
+        </delete>
     </target>
 </project>
