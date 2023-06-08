@@ -14,8 +14,8 @@
             <arg value="run" />
             <arg value="build" />
         </exec>
-        <copy todir="${basedir}/dist/" >
-            <fileset dir="${basedir}/public_html" includes="**"/>
+        <copy todir="${basedir}/public_html/" >
+            <fileset dir="${basedir}/dist/" includes="**"/>
         </copy>
     </target>
 </project>
