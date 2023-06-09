@@ -15,6 +15,7 @@ import SkipPrevious from '@material-ui/icons/SkipPrevious';
 import { debounce } from 'lodash';
 import usePrevious from "./hooks/usePrevious";
 
+
 const useStyles = makeStyles({
   root: {
     maxWidth: '370px',
@@ -268,6 +269,7 @@ export default function() {
           <p>Prev: { hasTrackPrev.toString() }</p>
           <p>Track index: { trackPlaying }</p>
           */}
+          <p>&nbsp;</p>
         </div>
       </div>
     </Container>
