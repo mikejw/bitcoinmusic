@@ -37,20 +37,28 @@ function formatTime(time) {
 
 const defTracks = [
   {
-    title: 'Shell As Seen - Shuffle',
-    file:  '/tracks/shuff.mp3',
+    title: 'Shell As Seen - 90schillwave',
+    file:  '/tracks/90schillwave.mp3',
   },
   {
-    title: 'Shell As Seen - Not as Easy as it Looks',
-    file: '/tracks/pop.mp3',
+    title: 'Shell As Seen - Driving Boys',
+    file:  '/tracks/driving boys.mp3',
   },
   {
-    title: 'Shell As Seen - Vitamin D',
-    file:  '/tracks/vitamin_d.mp3',
+    title: 'Shell As Seen - Emily',
+    file: '/tracks/emily.mp3'
   },
   {
-    title: 'Shell As Seen - Dillema',
-    file: '/tracks/dillema.mp3'
+    title: 'Shell As Seen - Exp1',
+    file: '/tracks/exp1.mp3'
+  },
+  {
+    title: 'Shell As Seen - Rockin\' Williams',
+    file: '/tracks/rockin-williams.mp3'
+  },
+  {
+    title: 'Chew - \'Weird\'',
+    file: '/tracks/weird.mp3'
   }
 ]
 
@@ -212,7 +220,7 @@ export default function() {
   return (
     <Container>
       <div className={classes.root}>
-        <h1>Shell As Seen - Vitamin D</h1>
+        <h1>Shell As Seen - Live 2 Demos (Unreleased)</h1>
         <img src={"/artwork/vitamin-d.jpg"} alt="Artwork" style={{ width: '100%'}} />
         <div style={{ textAlign: 'center', fontSize: '2rem' }}>
           <SkipPrevious
