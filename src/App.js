@@ -220,7 +220,7 @@ export default function() {
   return (
     <Container>
       <div className={classes.root}>
-        <h1>Shell As Seen ft. CHW- Live 2 Demos (Unreleased)</h1>
+        <h1>Shell As Seen - Live 2 Demos ft. CHW (Unreleased)</h1>
         <img src={"/artwork/vitamin-d.jpg"} alt="Artwork" style={{ width: '100%'}} />
         <div style={{ textAlign: 'center', fontSize: '2rem' }}>
           <SkipPrevious
