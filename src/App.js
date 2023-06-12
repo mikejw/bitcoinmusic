@@ -278,6 +278,7 @@ export default function() {
           <p>Track index: { trackPlaying }</p>
           */}
           <p>&nbsp;</p>
+          <p>Copyright © 2023 Ai-em. All rights reserved.</p>
         </div>
       </div>
     </Container>
