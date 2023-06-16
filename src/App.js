@@ -225,7 +225,7 @@ export default function() {
         <div style={{ textAlign: 'center', fontSize: '2rem' }}>
           <SkipPrevious
             onClick={ handleSkipPrevious }
-            style={{ color: '#999', cursor: 'pointer'}}
+            style={ hasTrackPrev? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
           />
           {!playing &&
           <PlayCircleFilled onClick={ play } style={{ color: '#999', cursor: 'pointer'}} />
@@ -278,7 +278,7 @@ export default function() {
           <p>Track index: { trackPlaying }</p>
           */}
           <p>&nbsp;</p>
-          <p>Copyright © 2023 Ai-em. All rights reserved.</p>
+          <p>Copyright © 2023 Ai-em Ltd. All rights reserved.</p>
         </div>
       </div>
     </Container>

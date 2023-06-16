@@ -1,3 +1,6 @@
 module.exports = {
-  type: 'react-app'
+  type: 'react-app',
+  devServer: {
+    allowedHosts: ['localhost', '.ngrok.app']
+  }
 }
