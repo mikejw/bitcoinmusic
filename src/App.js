@@ -76,7 +76,7 @@ export default function(props) {
   const handleChangeVolume = (event, newValue) => {
     setVolume(newValue);
     let volume = parseFloat(`${(newValue) / 100}`);
-    Howler.volume(volume);
+    sound.volume(volume);
   };
 
   function play() {
