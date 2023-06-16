@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react'
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { Howl, Howler } from 'howler';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/core/Slider';
-import VolumeDown from '@material-ui/icons/VolumeDown';
-import VolumeUp from '@material-ui/icons/VolumeUp';
-import PlayCircleFilled from '@material-ui/icons/PlayCircleFilled';
-import PauseCircleFilled from '@material-ui/icons/PauseCircleFilled';
-import SkipNext from '@material-ui/icons/SkipNext';
-import SkipPrevious from '@material-ui/icons/SkipPrevious';
+import { makeStyles } from '@mui/styles';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Slider from '@mui/material/Slider';
+import VolumeDown from '@mui/icons-material/VolumeDown';
+import VolumeUp from '@mui/icons-material/VolumeUp';
+import PlayCircleFilled from '@mui/icons-material/PlayCircleFilled';
+import PauseCircleFilled from '@mui/icons-material/PauseCircleFilled';
+import SkipNext from '@mui/icons-material/SkipNext';
+import SkipPrevious from '@mui/icons-material/SkipPrevious';
 import { debounce } from 'lodash';
 import usePrevious from "./hooks/usePrevious";
 
