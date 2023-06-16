@@ -3,6 +3,6 @@ import './index.css'
 import React from 'react'
 import {render} from 'react-dom'
 
-import App from './App'
+import AppWrap from './AppWrap'
 
-render(<App/>, document.querySelector('#app'))
+render(<AppWrap />, document.querySelector('#app'))

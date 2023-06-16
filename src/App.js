@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from 'react'
-import Container from '@mui/material/Container';
 import { Howl, Howler } from 'howler';
 import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
@@ -23,6 +21,7 @@ const useStyles = makeStyles({
   },
 });
 
+
 function padDigits(number, digits) {
   return Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
 }
@@ -35,37 +34,14 @@ function formatTime(time) {
   return `${ padDigits(timeArr[0], 2) }:${ padDigits(seconds, 2) }`;
 }
 
-const defTracks = [
-  {
-    title: 'Shell As Seen - 90schillwave',
-    file:  '/tracks/90schillwave.mp3',
-  },
-  {
-    title: 'Shell As Seen - Driving Boys',
-    file:  '/tracks/driving boys.mp3',
-  },
-  {
-    title: 'Shell As Seen - Emily',
-    file: '/tracks/emily.mp3'
-  },
-  {
-    title: 'Shell As Seen - Exp1',
-    file: '/tracks/exp1.mp3'
-  },
-  {
-    title: 'Shell As Seen - Rockin\' Williams',
-    file: '/tracks/rockin-williams.mp3'
-  },
-  {
-    title: 'Chew - \'Weird\'',
-    file: '/tracks/weird.mp3'
-  }
-]
 
 var interval;
 const START_VOLUME = 20;
 
-export default function() {
+export default function(props) {
+
+  const { tracks: defTracks, artwork, title } = props.defTracks;
+
   const classes = useStyles();
 
   const [ tracks, setTracks ] = useState(defTracks);
@@ -218,70 +194,60 @@ export default function() {
   }, [playing, playEvent]);
 
   return (
-    <Container>
-      <div className={classes.root}>
-        <h1>Shell As Seen - Live 2 Demos ft. CHW (Unreleased)</h1>
-        <img src={"/artwork/vitamin-d.jpg"} alt="Artwork" style={{ width: '100%'}} />
-        <div style={{ textAlign: 'center', fontSize: '2rem' }}>
-          <SkipPrevious
-            onClick={ handleSkipPrevious }
-            style={ hasTrackPrev? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
-          />
-          {!playing &&
-          <PlayCircleFilled onClick={ play } style={{ color: '#999', cursor: 'pointer'}} />
-          }
-          {playing &&
-          <PauseCircleFilled onClick={ pause } style={{ color: '#999', cursor: 'pointer'}} />
-          }
-          <SkipNext
-            onClick={ hasTrackNext? handleSkipNext: () => {} }
-            style={ hasTrackNext? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
-          />
-        </div>
-        <div>
-          <Typography id="continuous-slider" gutterBottom>
-            Volume
-          </Typography>
-          <Grid container spacing={ 2 }>
-            <Grid item>
-              <VolumeDown />
-            </Grid>
-            <Grid item xs>
-              <Slider value={ volume } onChange={ handleChangeVolume } aria-labelledby="continuous-slider" />
-            </Grid>
-            <Grid item>
-              <VolumeUp />
-            </Grid>
-          </Grid>
-          <Typography id="continuous-slider" gutterBottom>
-            Track
-          </Typography>
-          <Grid container spacing={ 2 }>
-            <Grid item>
-            </Grid>
-            <Grid item xs>
-              <Slider
-                onMouseDown={ handlePositionMouseDown }
-                value={ position }
-                onChange={ debounceHandleChangePosition }
-                aria-labelledby="continuous-slider"
-              />
-            </Grid>
-            <Grid item>
-              { trackSeek } / { trackLength }
-            </Grid>
-          </Grid>
-          <p>{ tracks[trackPlaying].title }</p>
-          {/*
-          <p>Next: { hasTrackNext.toString() }</p>
-          <p>Prev: { hasTrackPrev.toString() }</p>
-          <p>Track index: { trackPlaying }</p>
-          */}
-          <p>&nbsp;</p>
-          <p>WARNING: Phone lock may interrupt playing!</p>
-          <p>Copyright © 2023 Ai-em Ltd. All rights reserved.</p>
-        </div>
+    <>
+      <h1>{ title }</h1>
+      <img src={`/artwork/${artwork}`} alt="Artwork" style={{ width: '100%'}} />
+      <div style={{ textAlign: 'center', fontSize: '2rem' }}>
+        <SkipPrevious
+          onClick={ handleSkipPrevious }
+          style={ hasTrackPrev? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
+        />
+        {!playing &&
+        <PlayCircleFilled onClick={ play } style={{ color: '#999', cursor: 'pointer'}} />
+        }
+        {playing &&
+        <PauseCircleFilled onClick={ pause } style={{ color: '#999', cursor: 'pointer'}} />
+        }
+        <SkipNext
+          onClick={ hasTrackNext? handleSkipNext: () => {} }
+          style={ hasTrackNext? { color: '#999', cursor: 'pointer'}: { color: '#eee', cursor: 'default' } }
+        />
       </div>
-    </Container>
+      <div>
+        <Typography id="continuous-slider" gutterBottom>
+          Volume
+        </Typography>
+        <Grid container spacing={ 2 }>
+          <Grid item>
+            <VolumeDown />
+          </Grid>
+          <Grid item xs>
+            <Slider value={ volume } onChange={ handleChangeVolume } aria-labelledby="continuous-slider" />
+          </Grid>
+          <Grid item>
+            <VolumeUp />
+          </Grid>
+        </Grid>
+        <Typography id="continuous-slider" gutterBottom>
+          Track
+        </Typography>
+        <Grid container spacing={ 2 }>
+          <Grid item>
+          </Grid>
+          <Grid item xs>
+            <Slider
+              onMouseDown={ handlePositionMouseDown }
+              value={ position }
+              onChange={ debounceHandleChangePosition }
+              aria-labelledby="continuous-slider"
+            />
+          </Grid>
+          <Grid item>
+            { trackSeek } / { trackLength }
+          </Grid>
+        </Grid>
+        <p>{trackPlaying + 1}: { tracks[trackPlaying].title }</p>
+      </div>
+    </>
   );
 }
