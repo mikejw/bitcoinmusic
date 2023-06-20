@@ -77,7 +77,6 @@ export default function() {
           <App defTracks={rel2} />
           <p>&nbsp;</p>
           <p>WARNING: Phone lock may interrupt playing!</p>
-          <p>Copyright © 2023 Ai-em Ltd. All rights reserved.</p>
           <p>&nbsp;</p>
         </div>
       </Container>
